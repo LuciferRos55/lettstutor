@@ -26,20 +26,20 @@ import 'package:boilerplate/constants/font_family.dart';
 import 'package:flutter/material.dart';
 
 final ThemeData themeData = new ThemeData(
-    fontFamily: FontFamily.productSans,
-    brightness: Brightness.light,
-    primarySwatch: MaterialColor(AppColors.orange[500]!.value, AppColors.orange),
-    primaryColor: AppColors.orange[500],
-    primaryColorBrightness: Brightness.light,
-    accentColor: AppColors.orange[500],
-    accentColorBrightness: Brightness.light
+  fontFamily: FontFamily.quicksand,
+  brightness: Brightness.light,
+  primaryColor: AppColors.colors['systemColor'],
+  primaryColorBrightness: Brightness.light,
+  accentColor: AppColors.colors['systemColor'],
+  accentColorBrightness: Brightness.light,
+  backgroundColor: Colors.white,
 );
 
 final ThemeData themeDataDark = ThemeData(
-  fontFamily: FontFamily.productSans,
+  fontFamily: FontFamily.quicksand,
   brightness: Brightness.dark,
-  primaryColor: AppColors.orange[500],
+  primaryColor: AppColors.colors['systemColor'],
   primaryColorBrightness: Brightness.dark,
-  accentColor: AppColors.orange[500],
+  accentColor: AppColors.colors['systemColor'],
   accentColorBrightness: Brightness.dark,
 );
