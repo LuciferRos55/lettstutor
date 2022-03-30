@@ -75,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           description:
                               'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat',
                           name: 'Chou Võ',
-                          urlImage: 'img_avatar1.jpg'),
+                          urlImage: 'assets/images/avatars/img_avatar1.jpg'),
                       SizedBox(
                         height: Dimens.md_padding,
                       ),
@@ -83,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           description:
                               'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat',
                           name: 'Tin Trừn',
-                          urlImage: 'img_avatar2.jpg'),
+                          urlImage: 'assets/images/avatars/img_avatar2.jpg'),
                       SizedBox(
                         height: Dimens.md_padding,
                       ),
@@ -91,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           description:
                               'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat',
                           name: 'Da Hưn',
-                          urlImage: 'img_avatar1.jpg'),
+                          urlImage: 'assets/images/avatars/img_avatar1.jpg'),
                     ],
                   ),
                 ),
