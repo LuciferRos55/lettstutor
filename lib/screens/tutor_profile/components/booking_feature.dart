@@ -87,7 +87,7 @@ class BookingFeature extends StatelessWidget {
                                     showTopSnackBar(
                                       context,
                                       const CustomSnackBar.success(
-                                        message: "Booking successful. ",
+                                        message: "Booked successfully. ",
                                         backgroundColor: Colors.green,
                                       ),
                                       showOutAnimationDuration: const Duration(milliseconds: 700),
@@ -227,7 +227,7 @@ class BookingFeature extends StatelessWidget {
               padding: const EdgeInsets.only(top: 13, bottom: 13),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: const [Text("Booking", style: TextStyle(color: Colors.white))],
+                children: const [Text("Book this tutor", style: TextStyle(color: Colors.white))],
               ),
             ),
             style: ElevatedButton.styleFrom(

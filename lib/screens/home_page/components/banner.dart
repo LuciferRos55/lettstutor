@@ -24,7 +24,7 @@ class BannerHomePage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              "Wellcome to Lettutor",
+              "Welcome to Lettstutor",
               style: TextStyle(fontSize: 17, color: Colors.white, fontWeight: FontWeight.bold),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -38,7 +38,7 @@ class BannerHomePage extends StatelessWidget {
                 child: Container(
                     padding: const EdgeInsets.only(top: 10, bottom: 10),
                     child: const Text(
-                      "Booking a lesson",
+                      "Book a lesson",
                       style: TextStyle(color: Colors.blue, fontSize: 14, fontWeight: FontWeight.bold),
                     )),
                 style: ElevatedButton.styleFrom(
