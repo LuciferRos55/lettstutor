@@ -1,4 +1,4 @@
-name: lettutor_mobile
+name: lettstutor
 description: A new Flutter project.
 
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
@@ -24,13 +24,32 @@ dependencies:
   flutter_rating_bar: ^4.0.0
   flutter_cached_pdfview: ^0.4.0-nullsafety
   image_picker: ^0.8.4+4
+  http: ^0.13.4
+  cached_network_image: ^3.2.0
+  url_launcher: ^6.0.17
+  video_player: ^2.2.10
+  chewie: ^1.1.0
+  firebase_core: ^1.11.0
+  firebase_auth: ^3.3.5
+  google_sign_in: ^5.2.1
+  flutter_facebook_auth: ^4.0.0
+  jitsi_meet: ^4.0.0
+  shared_preferences: ^2.0.11
+  syncfusion_flutter_pdfviewer: ^19.4.42-beta
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.9.2
 
   flutter_lints: ^1.0.0
   device_preview: ^1.0.0-alpha.15
+
+flutter_icons:
+  image_path: "asset/app_icon.png"
+  android: true
+  ios: true
+
 flutter:
   uses-material-design: true
 

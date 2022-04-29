@@ -7,19 +7,21 @@ class DropdownEdit extends StatelessWidget {
     required this.selectedItem,
     required this.items,
     required this.onChange,
+    required this.fieldName,
   }) : super(key: key);
 
   final String title, selectedItem;
-  final List<String> items;
-  final Function(String) onChange;
+  final Map<String, String> items;
+  final Function({DateTime? birthday, String phone, String country, String level}) onChange;
+  final String fieldName;
 
   @override
   Widget build(BuildContext context) {
-    final listItems = items
+    final listItems = items.entries
         .map(
           (item) => DropdownMenuItem(
-            child: Text(item),
-            value: item,
+            child: Text(item.value),
+            value: item.key,
           ),
         )
         .toList();
@@ -52,7 +54,11 @@ class DropdownEdit extends StatelessWidget {
               items: listItems,
               onChanged: (String? value) {
                 if (value is String) {
-                  onChange(value);
+                  if (fieldName == "Country") {
+                    onChange(country: value);
+                  } else if (fieldName == "Level") {
+                    onChange(level: value);
+                  }
                 }
               },
             ),
