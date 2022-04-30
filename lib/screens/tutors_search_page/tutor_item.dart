@@ -1,16 +1,46 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import '/models/tutor/tutor.dart';
-import '/widgets/avatar_circle.dart';
-import '/routes/route.dart' as routes;
+import 'package:lettstutor/models/tutor_model/tutor_info_model.dart';
+import 'package:lettstutor/models/tutor_model/tutor_model.dart';
+import 'package:lettstutor/global_state/auth_provider.dart';
+import 'package:lettstutor/route.dart' as routes;
+import 'package:lettstutor/constants/learning_topics.dart';
+import 'package:lettstutor/services/tutor_service.dart';
+import 'package:provider/provider.dart';
 
-class TutorCardInfo extends StatelessWidget {
+class TutorCardInfo extends StatefulWidget {
   const TutorCardInfo({Key? key, required this.tutor}) : super(key: key);
 
-  final Tutor tutor;
+  final TutorInfo tutor;
+
+  @override
+  State<TutorCardInfo> createState() => _TutorCardInfoState();
+}
+
+class _TutorCardInfoState extends State<TutorCardInfo> {
+  Tutor? tutorDetail;
+  bool isLoading = true;
+
+  fetchTutorDetail(String token) async {
+    final tutorDetail = await TutorService.getTutor(widget.tutor.userId, token);
+    setState(() {
+      this.tutorDetail = tutorDetail;
+      isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final specialist = listLearningTopics.entries
+        .where((element) => widget.tutor.specialties.split(",").contains(element.key))
+        .map((e) => e.value)
+        .toList();
+
+    final authProvider = Provider.of<AuthProvider>(context);
+    if (isLoading) {
+      fetchTutorDetail(authProvider.tokens!.access.token);
+    }
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: GestureDetector(
@@ -18,7 +48,7 @@ class TutorCardInfo extends StatelessWidget {
           Navigator.pushNamed(
             context,
             routes.tutorProfilePage,
-            arguments: {"tutor": tutor},
+            arguments: {"tutorID": widget.tutor.userId},
           );
         },
         child: Card(
@@ -36,9 +66,24 @@ class TutorCardInfo extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 15),
-                      child: AvatarCircle(width: 70, height: 70, source: tutor.image),
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 10, right: 10),
+                      height: 60,
+                      width: 60,
+                      child: CircleAvatar(
+                          backgroundColor: Colors.white,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(1000),
+                            child: CachedNetworkImage(
+                              imageUrl: widget.tutor.avatar as String,
+                              fit: BoxFit.cover,
+                              width: 70,
+                              height: 70,
+                              progressIndicatorBuilder: (context, url, downloadProgress) =>
+                                  CircularProgressIndicator(value: downloadProgress.progress),
+                              errorWidget: (context, url, error) => const Icon(Icons.error),
+                            ),
+                          )),
                     ),
                     Expanded(
                       child: Column(
@@ -51,7 +96,7 @@ class TutorCardInfo extends StatelessWidget {
                                 child: Container(
                                   margin: const EdgeInsets.only(bottom: 5),
                                   child: Text(
-                                    tutor.fullName,
+                                    widget.tutor.name,
                                     style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
@@ -61,36 +106,30 @@ class TutorCardInfo extends StatelessWidget {
                               Row(
                                 children: [
                                   Text(
-                                    tutor.getTotalStar().toString(),
+                                    tutorDetail?.avgRating != null ? tutorDetail!.avgRating.toString() : "0",
                                     style: const TextStyle(
-                                      fontSize: 17,
+                                      fontSize: 16,
                                       fontWeight: FontWeight.w500,
                                       color: Colors.pink,
                                     ),
                                   ),
-                                  const SizedBox(width: 5),
-                                  SvgPicture.asset(
-                                    "asset/svg/ic_star.svg",
-                                    color: Colors.yellow,
-                                    height: 20,
-                                    width: 20,
-                                  ),
+                                  const Icon(Icons.star, color: Colors.yellow),
                                 ],
-                              ),
+                              )
                             ],
                           ),
                           SizedBox(
                             height: 30,
                             child: ListView.builder(
-                              itemCount: tutor.languages.length,
+                              itemCount: specialist.length,
                               scrollDirection: Axis.horizontal,
                               shrinkWrap: true,
                               itemBuilder: (context, index) {
                                 return Container(
                                   margin: const EdgeInsets.only(top: 5, right: 8),
-                                  padding: const EdgeInsets.all(5),
+                                  padding: const EdgeInsets.fromLTRB(8, 5, 8, 0),
                                   child: Text(
-                                    tutor.languages[index],
+                                    specialist[index],
                                     style: const TextStyle(
                                       fontSize: 12,
                                       color: Colors.blue,
@@ -117,7 +156,7 @@ class TutorCardInfo extends StatelessWidget {
                 Container(
                     margin: const EdgeInsets.only(top: 10),
                     child: Text(
-                      tutor.intro,
+                      widget.tutor.bio,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 4,
                     ))

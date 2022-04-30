@@ -1,20 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import '/data/tutors_sample.dart';
-import '/models/tutor/feedback.dart';
-import '/models/tutor/tutor.dart';
-import '/provider/user_provider.dart';
+import 'package:lettstutor/models/schedule_model/booking_info_model.dart';
+import 'package:lettstutor/global_state/app_provider.dart';
+import 'package:lettstutor/global_state/auth_provider.dart';
+import 'package:lettstutor/services/tutor_service.dart';
 import 'package:provider/provider.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
-import 'package:uuid/uuid.dart';
-
-Uuid uuid = const Uuid();
 
 class FeedbackPage extends StatefulWidget {
-  const FeedbackPage({Key? key, required this.tutor}) : super(key: key);
-  final Tutor tutor;
+  const FeedbackPage({Key? key, required this.bookingInfo}) : super(key: key);
+  final BookingInfo bookingInfo;
 
   @override
   State<FeedbackPage> createState() => _FeedbackPageState();
@@ -26,7 +23,8 @@ class _FeedbackPageState extends State<FeedbackPage> {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<UserProvider>(context).user;
+    final authProvider = Provider.of<AuthProvider>(context);
+    final lang = Provider.of<AppProvider>(context).language;
 
     return SafeArea(
       child: Scaffold(
@@ -40,7 +38,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
           title: Container(
             margin: const EdgeInsets.only(left: 10),
             child: Text(
-              "Give feedback",
+              lang.giveFeedback,
               style: TextStyle(color: Colors.grey[800]),
             ),
           ),
@@ -54,14 +52,14 @@ class _FeedbackPageState extends State<FeedbackPage> {
                 autofocus: true,
                 maxLines: 3,
                 style: const TextStyle(fontSize: 15),
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                     border: InputBorder.none,
                     focusedBorder: InputBorder.none,
                     enabledBorder: InputBorder.none,
                     errorBorder: InputBorder.none,
                     disabledBorder: InputBorder.none,
-                    contentPadding: EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
-                    hintText: "Enter feedbacks here..."),
+                    contentPadding: const EdgeInsets.only(left: 15, bottom: 11, top: 11, right: 15),
+                    hintText: lang.hintFeedback),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -88,44 +86,40 @@ class _FeedbackPageState extends State<FeedbackPage> {
                       },
                     ),
                     ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         if (_controller.text.isEmpty) {
                           showTopSnackBar(
                             context,
-                            const CustomSnackBar.error(message: "Please enter feedback content..."),
+                            CustomSnackBar.error(message: lang.errEnterFeedback),
                             showOutAnimationDuration: const Duration(milliseconds: 1000),
                             displayDuration: const Duration(microseconds: 1000),
                           );
-                        } else if (_controller.text.split(" ").length < 5) {
+                        } else if (_controller.text.split(" ").length < 3) {
                           showTopSnackBar(
                             context,
-                            const CustomSnackBar.error(message: "Feedback content must has 5 words at least."),
+                            CustomSnackBar.error(message: lang.errFeedbackLength),
                             showOutAnimationDuration: const Duration(milliseconds: 1000),
                             displayDuration: const Duration(microseconds: 1000),
                           );
                         } else {
-                          FeedbackRate newFeedback = FeedbackRate(
-                            userId: user.id,
-                            id: uuid.v4(),
-                            content: _controller.text,
-                            rating: rating,
-                            createdAt: DateTime.now(),
-                          );
-
-                          for (int index = 0; index < TutorsSample.tutors.length; index++) {
-                            if (TutorsSample.tutors[index].id == widget.tutor.id) {
-                              TutorsSample.tutors[index].feedbacks.add(newFeedback);
-                              break;
-                            }
+                          final res = await TutorService.witeFeedback(
+                              _controller.text,
+                              widget.bookingInfo.id,
+                              widget.bookingInfo.scheduleDetailInfo!.scheduleInfo!.tutorId,
+                              rating,
+                              authProvider.tokens!.access.token);
+                          if (res) {
+                            showTopSnackBar(
+                              context,
+                              CustomSnackBar.success(
+                                message: lang.successFeedback,
+                                backgroundColor: Colors.green,
+                              ),
+                              showOutAnimationDuration: const Duration(milliseconds: 1000),
+                              displayDuration: const Duration(microseconds: 1000),
+                            );
+                            Navigator.pop(context);
                           }
-
-                          // TutorsSample.tutors
-                          //     .where((element) => element.id == widget.tutor.id)
-                          //     .first
-                          //     .feedbacks
-                          //     .add(newFeedback);
-
-                          Navigator.pop(context);
                         }
                       },
                       child: Row(
@@ -137,9 +131,9 @@ class _FeedbackPageState extends State<FeedbackPage> {
                             color: Colors.white,
                           ),
                           const SizedBox(width: 10),
-                          const Text(
-                            "Feedback",
-                            style: TextStyle(fontSize: 15),
+                          Text(
+                            lang.feedback,
+                            style: const TextStyle(fontSize: 15),
                           ),
                         ],
                       ),
