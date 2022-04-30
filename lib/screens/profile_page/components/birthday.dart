@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:lettstutor/global_state/app_provider.dart';
+import 'package:provider/provider.dart';
 
 class BirthdayEdition extends StatefulWidget {
   const BirthdayEdition({
@@ -7,8 +9,8 @@ class BirthdayEdition extends StatefulWidget {
     required this.birthday,
   }) : super(key: key);
 
-  final Function(DateTime) setBirthday;
-  final DateTime birthday;
+  final Function({DateTime? birthday, String phone, String country, String level}) setBirthday;
+  final DateTime? birthday;
 
   @override
   State<BirthdayEdition> createState() => _BirthdayEditionState();
@@ -18,17 +20,19 @@ class _BirthdayEditionState extends State<BirthdayEdition> {
   void _selectDate(BuildContext context) async {
     DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: widget.birthday, // Refer step 1
+      initialDate: widget.birthday ?? DateTime.now(), // Refer step 1
       firstDate: DateTime(1900),
-      lastDate: DateTime(2022),
+      lastDate: DateTime(2030),
     );
     if (picked != null && picked != widget.birthday) {
-      widget.setBirthday(picked);
+      widget.setBirthday(birthday: picked);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final lang = Provider.of<AppProvider>(context).language;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 10, top: 10),
       child: Column(
@@ -37,9 +41,9 @@ class _BirthdayEditionState extends State<BirthdayEdition> {
         children: [
           Container(
             margin: const EdgeInsets.only(left: 5),
-            child: const Text(
-              "Birthday",
-              style: TextStyle(fontSize: 17),
+            child: Text(
+              lang.birthday,
+              style: const TextStyle(fontSize: 17),
             ),
           ),
           InkWell(
@@ -54,7 +58,7 @@ class _BirthdayEditionState extends State<BirthdayEdition> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    stringFormatDateTime(widget.birthday),
+                    stringFormatDateTime(widget.birthday ?? DateTime.now()),
                     style: const TextStyle(fontSize: 17),
                   ),
                 ],

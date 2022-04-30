@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:lettstutor/global_state/app_provider.dart';
+import 'package:provider/provider.dart';
 
 class PhoneEdition extends StatefulWidget {
-  const PhoneEdition({Key? key, required this.changePhone, required this.phone}) : super(key: key);
-  final Function(String) changePhone;
+  const PhoneEdition({Key? key, required this.changePhone, required this.phone, required this.isPhoneActivated})
+      : super(key: key);
+  final Function({DateTime? birthday, String phone, String country, String level}) changePhone;
   final String phone;
+  final bool isPhoneActivated;
 
   @override
   State<PhoneEdition> createState() => _PhoneEditionState();
@@ -20,6 +24,8 @@ class _PhoneEditionState extends State<PhoneEdition> {
 
   @override
   Widget build(BuildContext context) {
+    final lang = Provider.of<AppProvider>(context).language;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 10, top: 10),
       child: Column(
@@ -27,28 +33,29 @@ class _PhoneEditionState extends State<PhoneEdition> {
         children: [
           Container(
             margin: const EdgeInsets.only(bottom: 7, left: 5),
-            child: const Text(
-              "Phone number",
-              style: TextStyle(fontSize: 17),
+            child: Text(
+              lang.phone,
+              style: const TextStyle(fontSize: 17),
             ),
           ),
           TextField(
             style: TextStyle(fontSize: 17, color: Colors.grey[900]),
             controller: _controller,
-            onChanged: (value) => widget.changePhone(value),
-            decoration: const InputDecoration(
+            enabled: !widget.isPhoneActivated,
+            onChanged: (value) => widget.changePhone(phone: value),
+            decoration: InputDecoration(
               filled: true,
-              fillColor: Colors.white,
-              contentPadding: EdgeInsets.only(left: 15, right: 15),
-              border: OutlineInputBorder(
+              fillColor: Colors.grey[200],
+              contentPadding: const EdgeInsets.only(left: 15, right: 15),
+              border: const OutlineInputBorder(
                 borderSide: BorderSide(color: Colors.black26, width: 0.3),
                 borderRadius: BorderRadius.all(Radius.circular(10)),
               ),
-              enabledBorder: OutlineInputBorder(
+              enabledBorder: const OutlineInputBorder(
                 borderSide: BorderSide(color: Colors.black26, width: 0.3),
                 borderRadius: BorderRadius.all(Radius.circular(10)),
               ),
-              focusedBorder: OutlineInputBorder(
+              focusedBorder: const OutlineInputBorder(
                 borderSide: BorderSide(color: Colors.black26, width: 0.3),
                 borderRadius: BorderRadius.all(Radius.circular(10)),
               ),
