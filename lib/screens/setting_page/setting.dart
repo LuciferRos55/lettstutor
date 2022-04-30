@@ -1,11 +1,15 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '/provider/navigation_index.dart';
-import '/provider/user_provider.dart';
-import '/screens/setting_page/setting_btn.dart';
-import '/widgets/avatar_circle.dart';
-import '/routes/route.dart' as routes;
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:lettstutor/global_state/app_provider.dart';
+import 'package:lettstutor/global_state/auth_provider.dart';
+import 'package:lettstutor/global_state/navigation_index.dart';
+import 'package:lettstutor/screens/setting_page/setting_btn.dart';
+import 'package:lettstutor/route.dart' as routes;
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingPage extends StatefulWidget {
   const SettingPage({Key? key}) : super(key: key);
@@ -18,7 +22,9 @@ class _SettingPageState extends State<SettingPage> {
   @override
   Widget build(BuildContext context) {
     final naviationIndex = Provider.of<NavigationIndex>(context);
-    final uploadImage = Provider.of<UserProvider>(context).uploadImage;
+    final authProvider = Provider.of<AuthProvider>(context);
+    final userAuth = authProvider.userLoggedIn;
+    final lang = Provider.of<AppProvider>(context).language;
 
     return SingleChildScrollView(
       child: Padding(
@@ -36,32 +42,32 @@ class _SettingPageState extends State<SettingPage> {
                     height: 70,
                     width: 70,
                     child: CircleAvatar(
-                      child: uploadImage != null
-                          ? ClipRRect(
-                              borderRadius: BorderRadius.circular(1000),
-                              child: Image.file(
-                                uploadImage,
-                                width: 200,
-                                height: 200,
-                                fit: BoxFit.cover,
-                              ),
-                            )
-                          : const AvatarCircle(width: 70, height: 70, source: "asset/img/profile.jpg"),
-                    ),
+                        backgroundColor: Colors.white,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(1000),
+                          child: CachedNetworkImage(
+                            imageUrl: userAuth.avatar,
+                            width: 70,
+                            height: 70,
+                            fit: BoxFit.cover,
+                            progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(value: downloadProgress.progress),
+                            errorWidget: (context, url, error) => const Icon(Icons.error),
+                          ),
+                        )),
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
+                    children: [
                       Padding(
-                        padding: EdgeInsets.only(bottom: 5),
+                        padding: const EdgeInsets.only(bottom: 5),
                         child: Text(
-                          "Vo Minh Chau",
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                          userAuth.name,
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                         ),
                       ),
                       Text(
-                        "minhchau186@gmail.com",
-                        style: TextStyle(color: Colors.grey, fontSize: 13),
+                        userAuth.email,
+                        style: const TextStyle(color: Colors.grey, fontSize: 13),
                       )
                     ],
                   ),
@@ -69,20 +75,22 @@ class _SettingPageState extends State<SettingPage> {
               ),
             ),
             Column(
-              children: const <Widget>[
-                SettingButton(
-                  icon: "asset/svg/ic_list.svg",
-                  title: "Booking History",
-                  routeName: routes.bookingHistoryPage,
-                ),
+              children: <Widget>[
+                userAuth.roles != null && userAuth.roles!.contains("CHANGE_PASSWORD")
+                    ? SettingButton(
+                        icon: "asset/svg/ic_password2.svg",
+                        title: lang.changePassword,
+                        routeName: routes.changePasswordPage,
+                      )
+                    : Container(),
                 SettingButton(
                   icon: "asset/svg/ic_history.svg",
-                  title: "Session History",
+                  title: lang.sessionHistory,
                   routeName: routes.sessionHistoryPage,
                 ),
                 SettingButton(
                   icon: "asset/svg/ic_setting2.svg",
-                  title: "Advanced Settings",
+                  title: lang.advancedSetting,
                   routeName: routes.advancedSettingPage,
                 ),
               ],
@@ -90,23 +98,98 @@ class _SettingPageState extends State<SettingPage> {
             Container(
                 margin: const EdgeInsets.only(top: 30),
                 child: Column(
-                  children: const [
-                    SettingButton(
-                      icon: "asset/svg/ic_network.svg",
-                      title: "Our Website",
-                      routeName: routes.loginPage,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 15),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          launch("https://lettutor.com/");
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.only(top: 10, bottom: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Row(
+                                children: [
+                                  SvgPicture.asset(
+                                    "asset/svg/ic_network.svg",
+                                    width: 25,
+                                    color: Colors.grey[700],
+                                  ),
+                                  Container(
+                                    margin: const EdgeInsets.only(left: 15),
+                                    child: Text(
+                                      lang.ourWebsite,
+                                      style: TextStyle(color: Colors.grey[700], fontWeight: FontWeight.w400, fontSize: 13),
+                                    ),
+                                  )
+                                ],
+                              ),
+                              SvgPicture.asset(
+                                "asset/svg/ic_next.svg",
+                                color: Colors.grey[700],
+                              )
+                            ],
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.white,
+                          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(1000))),
+                        ),
+                      ),
                     ),
-                    SettingButton(
-                      icon: "asset/svg/ic_facebook2.svg",
-                      title: "Facebook",
-                      routeName: routes.loginPage,
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 15),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          launch("fb://page/107781621638450");
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.only(top: 10, bottom: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Row(
+                                children: [
+                                  SvgPicture.asset(
+                                    "asset/svg/ic_facebook2.svg",
+                                    width: 25,
+                                    color: Colors.grey[700],
+                                  ),
+                                  Container(
+                                    margin: const EdgeInsets.only(left: 15),
+                                    child: Text(
+                                      "Facebook",
+                                      style: TextStyle(color: Colors.grey[700], fontWeight: FontWeight.w400, fontSize: 13),
+                                    ),
+                                  )
+                                ],
+                              ),
+                              SvgPicture.asset(
+                                "asset/svg/ic_next.svg",
+                                color: Colors.grey[700],
+                              )
+                            ],
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.white,
+                          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(1000))),
+                        ),
+                      ),
                     ),
                   ],
                 )),
             Container(
               margin: const EdgeInsets.only(top: 40),
               child: ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
+                  SharedPreferences prefs = await SharedPreferences.getInstance();
+                  prefs.remove("refresh_token");
+                  authProvider.tokens = null;
                   Navigator.pushNamedAndRemoveUntil(
                     context,
                     routes.loginPage,
@@ -118,10 +201,10 @@ class _SettingPageState extends State<SettingPage> {
                   padding: const EdgeInsets.only(top: 13, bottom: 13),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
+                    children: [
                       Text(
-                        "Logout",
-                        style: TextStyle(color: Colors.white),
+                        lang.logout,
+                        style: const TextStyle(color: Colors.white),
                       )
                     ],
                   ),

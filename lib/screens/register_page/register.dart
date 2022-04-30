@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '/widgets/button_expand.dart';
+import 'package:lettstutor/global_state/app_provider.dart';
+import 'package:lettstutor/services/auth_service.dart';
+import 'package:lettstutor/widgets/button_expand.dart';
+import 'package:provider/provider.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
-import '/routes/route.dart' as routes;
+import 'package:lettstutor/route.dart' as routes;
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key}) : super(key: key);
@@ -19,23 +22,55 @@ class _SignUpPageState extends State<SignUpPage> {
 
   @override
   Widget build(BuildContext context) {
-    void handleSignUp() {
+    final appProvider = Provider.of<AppProvider>(context);
+    final lang = appProvider.language;
+
+    void handleSignUp() async {
       if (_emailController.text.isEmpty || _passwordController.text.isEmpty || _repasswordControler.text.isEmpty) {
         showTopSnackBar(
           context,
-          const CustomSnackBar.error(message: "Signup failed! Please enter all fields."),
+          CustomSnackBar.error(message: lang.errEnterAllFields),
           showOutAnimationDuration: const Duration(milliseconds: 1000),
-          displayDuration: const Duration(microseconds: 1000),
+          displayDuration: const Duration(microseconds: 3000),
+        );
+      } else if (!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(_emailController.text)) {
+        showTopSnackBar(
+          context,
+          CustomSnackBar.error(message: lang.invalidEmail),
+          showOutAnimationDuration: const Duration(milliseconds: 1000),
+          displayDuration: const Duration(microseconds: 3000),
+        );
+      } else if (_passwordController.text.length < 6) {
+        showTopSnackBar(
+          context,
+          CustomSnackBar.error(message: lang.passwordTooShort),
+          showOutAnimationDuration: const Duration(milliseconds: 1000),
+          displayDuration: const Duration(microseconds: 3000),
         );
       } else if (_passwordController.text != _repasswordControler.text) {
         showTopSnackBar(
           context,
-          const CustomSnackBar.error(message: "Signup failed! Passwords do not match."),
+          CustomSnackBar.error(message: lang.errPasswordMismatch),
           showOutAnimationDuration: const Duration(milliseconds: 1000),
-          displayDuration: const Duration(microseconds: 1000),
+          displayDuration: const Duration(microseconds: 3000),
         );
       } else {
-        Navigator.pushNamedAndRemoveUntil(context, routes.loginPage, (Route<dynamic> route) => false);
+        try {
+          await AuthService.registerWithEmailAndPassword(
+            _emailController.text,
+            _passwordController.text,
+            () {
+              Navigator.pushNamedAndRemoveUntil(context, routes.loginPage, (Route<dynamic> route) => false);
+            },
+          );
+        } catch (e) {
+          showTopSnackBar(
+            context,
+            CustomSnackBar.error(message: "Signup failed!. ${e.toString()}"),
+            showOutAnimationDuration: const Duration(milliseconds: 1000),
+            displayDuration: const Duration(microseconds: 4000),
+          );
+        }
       }
     }
 
@@ -100,7 +135,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       Padding(
                         padding: const EdgeInsets.only(bottom: 10),
                         child: Text(
-                          "Password",
+                          lang.password,
                           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.grey[800]),
                         ),
                       ),
@@ -138,7 +173,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       Padding(
                         padding: const EdgeInsets.only(bottom: 10),
                         child: Text(
-                          "Re-password",
+                          lang.confirmPassword,
                           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.grey[800]),
                         ),
                       ),
@@ -168,7 +203,6 @@ class _SignUpPageState extends State<SignUpPage> {
                     ],
                   ),
                 ),
-                //InvalidMessage(padding: const EdgeInsets.all(8), message: "* Invalid password", isError: _passwordError),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
@@ -176,12 +210,14 @@ class _SignUpPageState extends State<SignUpPage> {
                     children: [
                       Row(
                         children: <Widget>[
-                          const Text("Already have an account? "),
+                          Text(lang.loginQuestion),
                           GestureDetector(
-                            child: const Text("Login",
-                                style: TextStyle(
-                                  color: Colors.blue,
-                                )),
+                            child: Text(
+                              lang.signIn,
+                              style: const TextStyle(
+                                color: Colors.blue,
+                              ),
+                            ),
                             onTap: () {
                               Navigator.popAndPushNamed(context, routes.loginPage);
                             },
@@ -193,7 +229,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
                 ButtonFullWidth(
                   padding: const EdgeInsets.all(8.0),
-                  text: "Sign up",
+                  text: lang.signUp,
                   backgroundColor: const Color(0xff007CFF),
                   onPress: handleSignUp,
                 )
