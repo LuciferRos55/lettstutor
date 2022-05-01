@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '/data/user_sample.dart';
-import '/models/tutor/feedback.dart';
-import '/widgets/avatar_circle.dart';
-import '/widgets/rate_stars.dart';
+import 'package:lettstutor/models/user_model/feedback_model.dart';
+import 'package:lettstutor/widgets/rate_stars.dart';
 
 class RateAndComment extends StatelessWidget {
   const RateAndComment({Key? key, required this.feedback}) : super(key: key);
 
-  final FeedbackRate feedback;
+  final FeedBack feedback;
 
   @override
   Widget build(BuildContext context) {
-    final user = UsersSample.users.where((user) => user.id == feedback.userId).first;
-
     return Card(
       elevation: 8,
       child: Container(
@@ -22,33 +18,56 @@ class RateAndComment extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
-              //crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                    margin: const EdgeInsets.only(right: 10),
-                    child: AvatarCircle(width: 40, height: 40, source: user.image)),
+                  margin: const EdgeInsets.only(bottom: 10, right: 15),
+                  height: 40,
+                  width: 40,
+                  child: CircleAvatar(
+                      child: ClipRRect(
+                    borderRadius: BorderRadius.circular(1000),
+                    child: Image.network(
+                      feedback.firstInfo.avatar,
+                      width: 70,
+                      height: 70,
+                      fit: BoxFit.cover,
+                      errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                        return Container(
+                          color: Colors.amber,
+                          alignment: Alignment.center,
+                          child: const Text(
+                            'Whoops!',
+                            style: TextStyle(fontSize: 30),
+                          ),
+                        );
+                      },
+                    ),
+                  )),
+                ),
                 Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        user.fullName,
-                        style: const TextStyle(fontSize: 14),
-                      ),
-                      RateStars(count: feedback.rating)
-                    ],
+                  child: Container(
+                    margin: const EdgeInsets.only(top: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          feedback.firstInfo.name,
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                        RateStars(count: feedback.rating)
+                      ],
+                    ),
                   ),
                 ),
               ],
             ),
-            Container(
-                margin: const EdgeInsets.only(top: 10, bottom: 10),
-                child: feedback.content.isNotEmpty ? Text(feedback.content) : null),
+            Container(margin: const EdgeInsets.only(top: 10, bottom: 10), child: feedback.content.isNotEmpty ? Text(feedback.content) : null),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Text(
-                  DateFormat.yMEd().add_jm().format(feedback.createdAt),
+                  DateFormat.yMEd().add_jm().format(DateFormat("yyyy-MM-dd").parse(feedback.createdAt)),
                   style: const TextStyle(color: Colors.grey),
                 )
               ],
