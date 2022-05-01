@@ -59,7 +59,7 @@ class _BannerHomePageState extends State<BannerHomePage> {
                 Text(
                   timeStamp != 0 && totalLessonTime != null
                       ? "${lang.totalLessonTime} ${covertTotalTime(totalLessonTime as Duration, lang)} "
-                      : lang.wellcome,
+                      : lang.welcome,
                   style: const TextStyle(fontSize: 17, color: Colors.white, fontWeight: FontWeight.bold),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,

@@ -30,7 +30,7 @@ abstract class Language {
   get enterRoom;
   get recommendTutor;
   get seeAll;
-  get wellcome;
+  get welcome;
   get nextLesson;
   get bookAlesson;
 

@@ -59,7 +59,7 @@ class VietNamese extends Language {
   @override
   get seeAll => "Xem tất cả";
   @override
-  get wellcome => "Chào mừng đến với LetTutor";
+  get welcome => "Chào mừng đến với LetTutor";
   @override
   get nextLesson => "Buổi học tiếp theo";
   @override

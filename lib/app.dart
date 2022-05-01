@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:lettstutor/global_state/app_provider.dart';
 import 'package:lettstutor/global_state/navigation_index.dart';
 import 'package:lettstutor/global_state/auth_provider.dart';
+import 'package:lettstutor/screens/home_page/home.dart';
 import 'package:lettstutor/screens/login_page/login.dart';
 import 'package:provider/provider.dart';
 import 'package:lettstutor/route.dart' as routes;
@@ -30,7 +31,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         onGenerateRoute: routes.controller,
         // showPerformanceOverlay: true,
-        title: 'Lettutor',
+        title: 'Lettstutor',
         theme: ThemeData(primarySwatch: Colors.blue, primaryColor: const Color(0xff007CFF)),
         home: const AnnotatedRegion<SystemUiOverlayStyle>(
           value: SystemUiOverlayStyle(
