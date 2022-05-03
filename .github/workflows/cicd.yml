@@ -13,8 +13,6 @@ jobs:
       with:
         flutter-version: '2.10.4'
     - run: flutter packages get
-    - run: flutter test
-    - run: flutter build apk --debug --split-per-abi
     - name: Create a Release APK
       uses: ncipollo/release-action@v1
       with:
