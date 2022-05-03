@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1097573652869",
+    "project_id": "letstutor-cd8fe",
+    "storage_bucket": "letstutor-cd8fe.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1097573652869:android:e21033c2ed82ede9800cec",
+        "android_client_info": {
+          "package_name": "com.example.lettstutor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1097573652869-c5dlck6a83mhqmn98q2bcstpmdpdh2b7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXnXylnA-mBwb4Yhs46vfow_qFVSf5UqY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1097573652869-c5dlck6a83mhqmn98q2bcstpmdpdh2b7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
