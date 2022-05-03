@@ -148,7 +148,7 @@ class English extends Language {
   @override
   get searchTutor => "Search Tutors...";
   @override
-  get booking => "Booking";
+  get booking => "Book this tutor";
   @override
   get languages => "Languages";
   @override

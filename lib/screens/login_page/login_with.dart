@@ -41,7 +41,7 @@ class _LoginWithState extends State<LoginWith> {
           }
         }
       } catch (e) {
-        //print(e);
+        print(e);
       }
     }
 
