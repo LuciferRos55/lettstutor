@@ -19,3 +19,5 @@ jobs:
       with:
         artifacts: "build/app/outputs/flutter-apk/*.apk"
         token: ${{ secrets.WORKFLOW_TOKEN }}
+        commit: online-app
+        tag: v1.0.${{ github.run_number }}
